@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/src/maze/styles/app.css">
+    <link rel="icon" href="/mazelogo.ico"/>
+    <title>ShadowPaths</title>
+</head>
+<body>
+    <header>
+        <h1>Random Maze + BFS/DFS Visualizer</h1>
+        <p>Use W A S D to move. Generate a maze, then watch BFS or DFS explore and solve it</p>
+    </header>
+    <section class="panel">
+        <div class="field">
+            <label for="dimensions">Dimensions</label>
+            <input id="dimensions" type="number" min="5" max="40" value="25">
+        </div>
+        <div class="field">
+            <label for="algo">Search</label>
+            <select id="algo">
+                <option value="bfs">Breadth-First Search</option>
+                <option value="dfs">Depth-First Search</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="speed">Speed</label>
+            <input id="speed" type="range" min="1" max="120" value="60">
+        </div>
+        <div class="buttons">
+            <button id="New">New Maze</button>
+            <button id="Solve">Solve</button>
+            <button id="Reset" class="warning">Reset</button>
+        </div>
+    </section>
+    <div class="canvas-wrap">
+        <canvas id="maze" tabindex="0" aria-label="Maze"></canvas>
+    </div>
+    <div class="legend">
+        <span><span class="swatch sw-start"></span> Start</span>
+        <span><span class="swatch sw-goal"></span> Goal</span>
+        <span><span class="swatch sw-player"></span> Player</span>
+        <span><span class="swatch sw-visited"></span> Visited</span>
+        <span><span class="swatch sw-frontier"></span> Frontier</span>
+        <span><span class="swatch sw-path"></span> Path</span>
+    </div>
+    <script type="module" src="/src/maze/main.ts"></script>
+</body>
+</html>
