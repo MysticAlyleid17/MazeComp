@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <link rel="icon" href="./ponglogo.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ArcadiaPong</title>
+</head>
+<body>
+    <header class="header">
+    <div class="header-row">
+      <img src="./ponglogo.ico" alt="Arcadia Pong logo" class="logo" />
+      <h1>Arcadia Pong</h1>
+    </div>
+  
+    <p class="controls">
+      Controls: Move your mouse over the canvas or use the ↑↓ arrow keys to move
+      the left paddle. Use space to serve.
+    </p>
+    <p class="alt-controls">Left: mouse / ↑↓ keys - Right: Predicative ML</p>
+  </header>
+  
+  <main class="container">
+    <div class="canvas-wrap">
+      <canvas id="game"></canvas>
+    </div>
+  </main>
+    
+    <script type="module" src="./src/pong/main.ts"></script>
+</body>
