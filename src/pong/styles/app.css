@@ -24,7 +24,7 @@ body {
   align-items: center;
   background: radial-gradient(1200px 600px at 10% -10%, #15162c, var(--bg));
   color: var(--text);
-  font-family:var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+  font-family:geist-sans, ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
