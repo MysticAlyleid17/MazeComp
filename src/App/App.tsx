@@ -8,7 +8,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:gap-8">
           <a
             className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="/maze/index.html"
+            href="/maze"
             target="_blank"
           >
             <h3 className="text-2xl font-bold">Maze →</h3>
@@ -18,7 +18,7 @@ export default function HomePage() {
           </a>
           <a
             className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="/pong/pong.html"
+            href="/pong"
             target="_blank"
           >
             <h3 className="text-2xl font-bold">Pong →</h3>
@@ -28,7 +28,7 @@ export default function HomePage() {
           </a>
            <a
             className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="/convey/index.html"
+            href="/convey"
             target="_blank"
           >
             <h3 className="text-2xl font-bold">Conway's Game of Life →</h3>
@@ -38,7 +38,7 @@ export default function HomePage() {
           </a>
           <a
             className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="/tictactoe/index.html"
+            href="/tictactoe"
             target="_blank"
           >
             <h3 className="text-2xl font-bold">Tic Tac Toe →</h3>
@@ -48,7 +48,7 @@ export default function HomePage() {
           </a>
           <a
             className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="/poke/index.html"
+            href="/poke"
             target="_blank"
           >
             <h3 className="text-2xl font-bold">Poke →</h3>
