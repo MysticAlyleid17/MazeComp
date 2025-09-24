@@ -17,15 +17,14 @@ export default function HomePage() {
             </div>
           </a>
           <a
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="/pong"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">Pong →</h3>
-            <div className="text-lg">
-              Play Pong
-            </div>
-          </a>
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
+              href="/pong"
+            >
+              <h3 className="text-2xl font-bold">Pong →</h3>
+              <div className="text-lg">
+                Play Pong
+              </div>
+            </a>
         </div>
       </div>
     </main>
