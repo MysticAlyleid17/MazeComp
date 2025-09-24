@@ -1,4 +1,5 @@
 import type { Point } from './types';
+import { inBounds, idx, redraw } from "./render"
 
 // Funzioni di controllo e gestione eventi
 export function disableControls(elements: HTMLElement[], flag: boolean): void {
@@ -10,10 +11,8 @@ export function tryMove({
   walls,
   dr,
   dc,
-  inBounds,
-  idx,
-  redraw,
-  goal
+  goal,
+  ctx
 }: {
   player: Point;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,10 +20,8 @@ export function tryMove({
   COLS: number;
   dr: number;
   dc: number;
-  inBounds: (r: number, c: number) => boolean;
-  idx: (r: number, c: number) => number;
-  redraw: () => void;
   goal: Point;
+  ctx: CanvasRenderingContext2D
 }): void {
   const r = player.r, c = player.c, u = idx(r, c);
   const nr = r + dr, nc = c + dc;
@@ -39,7 +36,7 @@ export function tryMove({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   if (nc === c + 1 && !walls[u].right) player.c++;
   
-  redraw();
+  redraw(ctx);
   
   if (player.r === goal.r && player.c === goal.c) {
     // simple flash
@@ -52,45 +49,4 @@ export function tryMove({
       }
     }, 80);
   }
-}
-
-// Funzione per configurare gli event listener
-export function setupEventListeners({
-  btnNew,
-  btnSolve,
-  btnReset,
-  speedRange,
-  canvas,
-  onNewMaze,
-  onSolve,
-  onReset,
-  onSpeedChange,
-  onMove
-}: {
-  btnNew: HTMLButtonElement;
-  btnSolve: HTMLButtonElement;
-  btnReset: HTMLButtonElement;
-  speedRange: HTMLInputElement;
-  canvas: HTMLCanvasElement;
-  onNewMaze: () => void;
-  onSolve: () => void;
-  onReset: () => void;
-  onSpeedChange: () => void;
-  onMove: (dr: number, dc: number) => void;
-}): void {
-  btnNew.addEventListener('click', onNewMaze);
-  btnSolve.addEventListener('click', onSolve);
-  btnReset.addEventListener('click', onReset);
-  speedRange.addEventListener('input', onSpeedChange);
-  
-  canvas.addEventListener('keydown', e => {
-    switch (e.key.toLowerCase()) {
-      case 'w': onMove(-1, 0); e.preventDefault(); break;
-      case 's': onMove(1, 0); e.preventDefault(); break;
-      case 'a': onMove(0, -1); e.preventDefault(); break;
-      case 'd': onMove(0, 1); e.preventDefault(); break;
-    }
-  });
-  
-  window.addEventListener('resize', () => onNewMaze());
 }

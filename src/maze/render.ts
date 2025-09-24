@@ -1,7 +1,4 @@
 import { type Wall, type Point, PADDING } from './types';
-import { disableControls } from './controls';
-import { algoSelect, btnNew, btnReset, btnSolve, canvas, ctx, dimensionsInput, speedRange } from './types';
-import { clamp } from './utils';
 
 export const inBounds = (r: number, c: number) => r >= 0 && c >= 0 && r < ROWS && c < COLS;
 export const idx = (r: number, c: number) => r * COLS + c;
@@ -77,34 +74,35 @@ export function SetRunning(running_in: boolean) {
 }
 
 // Funzioni di rendering
-export function drawVisitedFrontier(): void {
+export function drawVisitedFrontier(ctx: CanvasRenderingContext2D): void {
   for (let i = 0; i < ROWS * COLS; i++) {
     if (visited[i]) {
       const r = Math.floor(i / COLS), c = i % COLS;
-      fillCell(r, c, getComputedStyle(document.documentElement).getPropertyValue('--visited'));
+      fillCell(ctx, r, c, getComputedStyle(document.documentElement).getPropertyValue('--visited'));
     } else if (frontier[i]) {
       const r = Math.floor(i / COLS), c = i % COLS;
-      fillCell(r, c, getComputedStyle(document.documentElement).getPropertyValue('--frontier'));
+      fillCell(ctx, r, c, getComputedStyle(document.documentElement).getPropertyValue('--frontier'));
     }
   }
 }
 
-export function drawPathOverlay(): void {
+export function drawPathOverlay(ctx: CanvasRenderingContext2D): void {
   for (const u of path) {
     const r = Math.floor(u / COLS), c = u % COLS;
-    fillCell(r, c, getComputedStyle(document.documentElement).getPropertyValue('--path'));
+    fillCell(ctx, r, c, getComputedStyle(document.documentElement).getPropertyValue('--path'));
   }
 }
 
-export function drawStartGoalPlayer(): void {
+export function drawStartGoalPlayer(ctx: CanvasRenderingContext2D ): void {
   // start & goal
-  fillCell(start.r, start.c, getComputedStyle(document.documentElement).getPropertyValue('--start'));
-  fillCell(goal.r, goal.c, getComputedStyle(document.documentElement).getPropertyValue('--goal'));
+  fillCell(ctx, start.r, start.c, getComputedStyle(document.documentElement).getPropertyValue('--start'));
+  fillCell(ctx, goal.r, goal.c, getComputedStyle(document.documentElement).getPropertyValue('--goal'));
 
   // player
-  const x = PADDING * 2 + player.c * Cell() + Cell() / 2;
-  const y = PADDING * 2 + player.r * Cell() + Cell() / 2;
-  const r = Math.max(3, Math.min(14, Cell() * 0.3));
+  const x = PADDING + player.c * CELL + CELL / 2;
+  const y = PADDING + player.r * CELL + CELL / 2;
+  const r = Math.max(3, Math.min(14, CELL * 0.3));
+
   ctx.save();
   ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--player');
   ctx.beginPath();
@@ -113,93 +111,88 @@ export function drawStartGoalPlayer(): void {
   ctx.restore();
 }
 
-export function redraw(): void {
-  resizeCanvas();
-  computeCell(COLS, ROWS);
-  clearBoard();
-  drawGrid(COLS, ROWS);
-  drawVisitedFrontier();
-  drawPathOverlay();
-  drawWalls(walls, COLS, ROWS, idx);
-  drawStartGoalPlayer();
+export function redraw(ctx: CanvasRenderingContext2D): void {
+  resizeCanvas(ctx);
+  computeCell(ctx.canvas, COLS, ROWS);
+  clearBoard(ctx);
+  drawGrid(ctx, COLS, ROWS);
+  drawVisitedFrontier(ctx);
+  drawPathOverlay(ctx);
+  drawWalls(ctx, walls, COLS, ROWS);
+  drawStartGoalPlayer(ctx);
 }
 
-export function cancelAnimation(): void {
+export function cancelAnimation(setControlsDisabled: (b: boolean) => void): void {
   if (stepTimer) clearInterval(stepTimer);
   stepTimer = undefined;
   RUNNING = false;
-  disableControls([btnNew, btnSolve, btnReset, dimensionsInput, algoSelect], false);
+  setControlsDisabled(false);
 }
 
-export function animatePath(seq: number[]): void {
+export function animatePath(ctx: CanvasRenderingContext2D, setControlsDisabled: (b: boolean) => void, seq: number[]): void {
   let i = 0;
-  const delay = Math.max(20, 1000 / clamp(parseInt(speedRange.value, 10) || 60, 1, 120));
+  const delay = Math.max(20, 1000 / 60);
   stepTimer = window.setInterval(() => {
     if (i < seq.length) {
       path = seq.slice(0, i + 1);
-      redraw();
+      redraw(ctx);
       i++;
     } else {
       clearInterval(stepTimer);
       stepTimer = undefined;
       RUNNING = false;
-      disableControls([btnNew, btnSolve, btnReset, dimensionsInput, algoSelect], false);
-      redraw();
-      drawSolutionDots(seq, COLS);
+      setControlsDisabled(false);
+      redraw(ctx);
+      drawSolutionDots(ctx, seq, COLS);
     }
   }, delay);
 }
 
-
-export function Cell(): number {
-  return CELL;
-}
-
 // Funzioni di rendering
-export function resizeCanvas(): void {
-  const rect = canvas.getBoundingClientRect();
+export function resizeCanvas(ctx: CanvasRenderingContext2D): void {
+  const rect = ctx.canvas.getBoundingClientRect();
   const dpr = window.devicePixelRatio || 1;
   const dw = Math.floor(rect.width * dpr);
   const dh = Math.floor(rect.height * dpr);
-  canvas.width = dw;
-  canvas.height = dh;
+  ctx.canvas.width = dw;
+  ctx.canvas.height = dh;
+
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
-export function computeCell(COLS: number, ROWS: number): number {
-  const side = Math.min(canvas.clientWidth, canvas.clientHeight) - 2 * PADDING;
-  const maxG = Math.max(COLS, ROWS);
-  CELL = Math.max(6, Math.floor(side / maxG));
-  WALL_W = Math.max(1, Math.floor(CELL * 0.125));
+export function computeCell(canvas: HTMLCanvasElement, COLS: number, _ROWS: number): number {
+  const side = canvas.clientWidth - 2 * PADDING;
+  CELL = side / COLS;
+  WALL_W = Math.max(1, CELL * 0.125);
   return CELL;
 }
 
 // Funzioni di disegno
-export function clearBoard(): void {
+export function clearBoard(ctx: CanvasRenderingContext2D): void {
   ctx.fillStyle = '#0b0f20';
-  ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+  ctx.fillRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
 }
 
-export function drawGrid(COLS: number, ROWS: number): void {
+export function drawGrid(ctx: CanvasRenderingContext2D, COLS: number, ROWS: number): void {
   ctx.save();
   ctx.strokeStyle = '#1b2144';
   ctx.lineWidth = 1;
   ctx.beginPath();
   for (let r = 0; r <= ROWS; r++) {
-    const y = PADDING * 2 + r * CELL + .5;
-    ctx.moveTo(PADDING * 2, y);
-    ctx.lineTo(PADDING * 2 + COLS * CELL, y);
+    const y = PADDING + r * CELL + .5;
+    ctx.moveTo(PADDING, y);
+    ctx.lineTo(PADDING + COLS * CELL, y);
   }
   for (let c = 0; c <= COLS; c++) {
-    const x = PADDING * 2 + c * CELL + .5;
-    ctx.moveTo(x, PADDING * 2);
-    ctx.lineTo(x, PADDING * 2 + ROWS * CELL);
+    const x = PADDING + c * CELL + .5;
+    ctx.moveTo(x, PADDING);
+    ctx.lineTo(x, PADDING + ROWS * CELL);
   }
   ctx.stroke();
   ctx.restore();
 }
 
-export function drawWalls(walls: Wall[], COLS: number, ROWS: number, idx: (r: number, c: number) => number): void {
+export function drawWalls(ctx: CanvasRenderingContext2D, walls: Wall[], COLS: number, ROWS: number): void {
   ctx.save();
   ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--wall');
   ctx.lineWidth = WALL_W;
@@ -207,8 +200,8 @@ export function drawWalls(walls: Wall[], COLS: number, ROWS: number, idx: (r: nu
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS; c++) {
       const u = idx(r, c);
-      const x = PADDING * 2 + c * CELL;
-      const y = PADDING * 2 + r * CELL;
+      const x = PADDING + c * CELL;
+      const y = PADDING + r * CELL;
       ctx.beginPath();
       const wall = walls[u];
       if (!wall) throw new Error("Wall not found")
@@ -226,23 +219,23 @@ export function drawWalls(walls: Wall[], COLS: number, ROWS: number, idx: (r: nu
   ctx.restore();
 }
 
-export function fillCell(r: number, c: number, color: string): void {
+export function fillCell(ctx: CanvasRenderingContext2D, r: number, c: number, color: string): void {
   ctx.fillStyle = color;
   ctx.fillRect(
-    PADDING * 2 + c * CELL + WALL_W,
-    PADDING * 2 + r * CELL + WALL_W,
+    PADDING + c * CELL + WALL_W,
+    PADDING + r * CELL + WALL_W,
     CELL - 2 * WALL_W,
     CELL - 2 * WALL_W
   );
 }
 
-export function drawSolutionDots(seq: number[], COLS: number): void {
+export function drawSolutionDots(ctx: CanvasRenderingContext2D, seq: number[], COLS: number): void {
   ctx.save();
   ctx.fillStyle = '#000';
   for (const u of seq) {
     const r = Math.floor(u / COLS), c = u % COLS;
-    const x = PADDING * 2 + c * CELL + CELL / 2;
-    const y = PADDING * 2 + r * CELL + CELL / 2;
+    const x = PADDING + c * CELL + CELL / 2;
+    const y = PADDING + r * CELL + CELL / 2;
     const rad = Math.max(2, CELL * 0.1);
     ctx.beginPath();
     ctx.arc(x, y, rad, 0, Math.PI * 2);

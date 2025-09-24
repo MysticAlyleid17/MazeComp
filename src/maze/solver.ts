@@ -1,5 +1,6 @@
 import type { Algorithm } from './types';
 import { neighbors } from './mazeGenerator';
+import { inBounds, idx, redraw, animatePath, cancelAnimation } from "./render"
 
 export function solve({
   algorithm,
@@ -10,12 +11,8 @@ export function solve({
   start,
   goal,
   COLS,
-  inBounds,
-  idx,
-  redraw,
-  animatePath,
-  cancelAnimation,
-  speedValue
+  setControlsDisabled,
+  ctx
 }: {
   algorithm: Algorithm;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,12 +23,8 @@ export function solve({
   start: { r: number; c: number };
   goal: { r: number; c: number };
   COLS: number;
-  inBounds: (r: number, c: number) => boolean;
-  idx: (r: number, c: number) => number;
-  redraw: () => void;
-  animatePath: (seq: number[]) => void;
-  cancelAnimation: () => void;
-  speedValue: string;
+  setControlsDisabled: (b: boolean) => void;
+  ctx: CanvasRenderingContext2D
 }): void {
   visited.fill(false);
   frontier.fill(false);
@@ -45,13 +38,13 @@ export function solve({
   frontier[startU] = false;
 
   let found = false;
-  const delay = 1000 / clamp(parseInt(speedValue, 10) || 60, 1, 120);
+  const delay = 1000 / 60;
 
   const stepTimer = setInterval(() => {
     if (!queue.length) {
       // no more to explore → no solution
-      cancelAnimation();
-      redraw();
+      cancelAnimation(setControlsDisabled);
+      redraw(ctx);
       alert('No solution possible');
       return;
     }
@@ -82,13 +75,9 @@ export function solve({
 
       clearInterval(stepTimer);
       // animate final path then dots
-      animatePath(seq);
+      animatePath(ctx, setControlsDisabled, seq);
       return;
     }
-    redraw();
+    redraw(ctx);
   }, delay);
-}
-
-function clamp(n: number, lo: number, hi: number): number { 
-  return Math.max(lo, Math.min(hi, n)); 
 }
