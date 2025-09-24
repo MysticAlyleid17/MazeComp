@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import './styles/app.css';
+import { useEffect, useRef } from 'react';
+import { algoSelect, btnNew, btnReset, btnSolve, dimensionsInput, speedRange } from '../maze/types';
 
 export default function MazeGame() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -13,7 +13,6 @@ export default function MazeGame() {
     let utilsFn: any = {};
     let types: any = {};
     let stepTimer: any = undefined;
-    let RUNNING = false;
 
     const setup = async () => {
       renderFns = await import('../maze/render');
@@ -41,14 +40,6 @@ export default function MazeGame() {
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
 
-      // Elementi DOM
-      const dimensionsInput = document.getElementById('dimensions') as HTMLInputElement;
-      const algoSelect = document.getElementById('algo') as HTMLSelectElement;
-      const speedRange = document.getElementById('speed') as HTMLInputElement;
-      const btnNew = document.getElementById('New') as HTMLButtonElement;
-      const btnSolve = document.getElementById('Solve') as HTMLButtonElement;
-      const btnReset = document.getElementById('Reset') as HTMLButtonElement;
-
       // Funzioni di callback
       function onNewMaze() {
         renderFns.cancelAnimation();
@@ -63,14 +54,14 @@ export default function MazeGame() {
         renderFns.SetGoal(gridState.goal);
         renderFns.SetPlayer(gridState.player);
         renderFns.redraw();
-        canvas.focus();
+        if (canvas) canvas.focus();
       }
 
       function onReset() {
         renderFns.cancelAnimation();
         renderFns.SetPlayer({ r: 0, c: 0 });
         renderFns.redraw();
-        canvas.focus();
+        if (canvas) canvas.focus();
       }
 
       function onSpeedChange() {

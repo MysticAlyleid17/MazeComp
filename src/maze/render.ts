@@ -1,6 +1,6 @@
 import { type Wall, type Point, PADDING } from './types';
 import { disableControls } from './controls';
-import { algoSelect, btnNew, btnReset, btnSolve, canvas, ctx, dimensionsInput, speedRange } from './main';
+import { algoSelect, btnNew, btnReset, btnSolve, canvas, ctx, dimensionsInput, speedRange } from './types';
 import { clamp } from './utils';
 
 export const inBounds = (r: number, c: number) => r >= 0 && c >= 0 && r < ROWS && c < COLS;
