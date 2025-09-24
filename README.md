@@ -4,6 +4,8 @@ Welcome to **ShadowsArcade** – your pixel playground powered by React, TypeScr
 Whether you’re here to play, hack, or just peek under the hood, you’re in for a treat.  
 This repo is where arcade magic happens… or at least, where it’s brewing!
 
+Check out the [demo](https://shadowsarcade.netlify.app/)
+
 ---
 
 ## 🚀 Quickstart
